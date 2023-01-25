@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+<body>
+	<script>
+
+let array = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]
+let newArray = []
+var root = null;
+
+// Binary tree animation in log
+const prettyPrint = (node, prefix = '', isLeft = true) => {
+  if (node.right !== null) {
+    prettyPrint(node.right, `${prefix}${isLeft ? '│   ' : '    '}`, false);
+  }
+  console.log(`${prefix}${isLeft ? '└── ' : '┌── '}${node.data}`);
+  if (node.left !== null) {
+    prettyPrint(node.left, `${prefix}${isLeft ? '    ' : '│   '}`, true);
+  }
+}
+
+function sortAndReduce (array) {
+		//Sort array
+	array.sort(function(a,b){
+		return a-b;
+	})
+
+	//Delete double
+	let previousElement = 0
+	let counter = 0
+	for(let element of array){
+		if(element-previousElement!==0)	newArray.push(array[counter])
+		counter++
+		previousElement = element
+	}
+}
+sortAndReduce(array)
+
+const Node = (data) => {
+	return{
+		data:data,
+		left:null,
+		right:null
+	}
+}
+
+function buildTree (array, start, end) {
+	//base case
+	if(start>end) return null;
+
+	//root
+	var mid = parseInt((start+end)/2)	
+	var node = Node(array[mid])
+
+	//recursivity on each node
+	node.left = buildTree(array, start, mid-1);
+	node.right = buildTree(array, mid+1, end)
+
+	return node
+}
+
+function insertNode (root, newNode) {
+	//case where BST is empty
+	if (root == null) {
+        root = Node(newNode);
+        return root;
+    }
+
+	//run through the tree
+	if(newNode<root.data) root.left = insertNode(root.left, newNode)
+	if(newNode>root.data) root.right = insertNode(root.right, newNode)
+
+	//when newNode = an existing node
+	return root
+}
+
+//function UNMASTERED with minValue()
+function deleteNode(root, nodeToDelete) {
+	//case where tree is empty
+	if(root==null) return root;
+
+	//chase the node to delete in tree
+	if(nodeToDelete<root.data){
+		root.left = deleteNode(root.left, nodeToDelete)
+	} else if (nodeToDelete>root.data) {
+		root.right = deleteNode(root.right, nodeToDelete)
+	//else = equal, when the node is found
+	} else {
+	//when recursive function stack traced back (LIFO), check previous node
+		if (root.left == null) return root.right;
+		if (root.right == null) return root.left;
+	
+	//only if the node got left & right node
+	root.data = minValue(root.right)
+	root.right = deleteNode(root.right, root.key);
+	}
+
+	return root
+}
+
+function minValue (root){
+	let minv = root.data;
+	while(root.left != null){
+		minv = root.left.key;
+		root = root.left;
+	}
+	return minv;
+}
+
+
+const Tree = (root) => {
+	prettyPrint(root)
+	return{
+		root
+	}
+}
+
+let range = newArray.length;
+let binaryTree = buildTree(newArray, 0, range-1);
+insertNode(binaryTree, 50)
+insertNode(binaryTree, 34)
+insertNode(binaryTree, 5)
+//UNMASTERED deleteNode()
+deleteNode(binaryTree, 4)
+Tree(binaryTree);
+
+	</script>
+</body>
+</html>
